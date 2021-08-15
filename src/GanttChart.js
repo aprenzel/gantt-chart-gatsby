@@ -45,35 +45,29 @@ class Settings extends React.Component {
         monthFrom: props.dateFrom.getMonth(),
         monthTo: props.dateTo.getMonth(),
         yearFrom: props.dateFrom.getFullYear(),
-        yearTo: props.dateTo.getFullYear()
+        yearTo: props.dateTo.getFullYear(),
+        valid: true
       };
     }
   
     render() {
   
-      let fields1;
-      let fields2;
-  
-      if(this.state.level == "date-time"){
-  
-        fields1 = <input type="date" value={this.state.dateFrom.toISOString().substr(0, 10)} id="from-select-date" name="from-select-date" min="2000/1/1" max="2050/12/31" onChange={this.changeDateFrom}></input>;
-        fields2 = <input type="date" value={this.state.dateTo.toISOString().substr(0, 10)} id="to-select-date" name="to-select-date" onChange={this.changeDateTo}></input>;
-  
-      }else{
-  
+        let fields1;
+        let fields2;
+    
         let years = [];
-  
+
         for(let i=2000; i<=2100; i++){
-          years.push(<option key={i} value={i}>{i}</option>);
+            years.push(<option key={i} value={i}>{i}</option>);
         }
-      
+        
         fields1 =  (
         <div>
-          <select value={this.state.yearFrom} id="from-select-year" name="from-select-year" onChange={this.changeYearFrom}>
-          {years}    
-          </select>
-  
-          <select value={this.state.monthFrom} id="from-select-month" name="from-select-month" onChange={this.changeMonthFrom}>
+            <select className={this.state.valid ? "select_valid" : "select_invalid"} value={this.state.yearFrom} id="from-select-year" name="from-select-year" onChange={this.changeYearFrom}>
+            {years}    
+            </select>
+
+            <select className={this.state.valid ? "select_valid" : "select_invalid"} value={this.state.monthFrom} id="from-select-month" name="from-select-month" onChange={this.changeMonthFrom}>
             <option value="0">Jan</option>
             <option value="1">Feb</option>
             <option value="2">Mar</option>
@@ -86,17 +80,17 @@ class Settings extends React.Component {
             <option value="9">Okt</option>
             <option value="10">Nov</option>
             <option value="11">Dec</option>   
-          </select>
+            </select>
         </div> 
         );
-  
+
         fields2 = (
         <div>
-          <select value={this.state.yearTo} id="to-select-year" name="to-select-year" onChange={this.changeYearTo}>
-          {years}    
-          </select>
-  
-          <select value={this.state.monthTo} id="to-select-month" name="to-select-month" onChange={this.changeMonthTo}>
+            <select className={this.state.valid ? "select_valid" : "select_invalid"} value={this.state.yearTo} id="to-select-year" name="to-select-year" onChange={this.changeYearTo}>
+            {years}    
+            </select>
+
+            <select className={this.state.valid ? "select_valid" : "select_invalid"} value={this.state.monthTo} id="to-select-month" name="to-select-month" onChange={this.changeMonthTo}>
             <option value="0">Jan</option>
             <option value="1">Feb</option>
             <option value="2">Mar</option>
@@ -109,96 +103,88 @@ class Settings extends React.Component {
             <option value="9">Okt</option>
             <option value="10">Nov</option>
             <option value="11">Dec</option>   
-          </select>
+            </select>
         </div> 
         );
-      }
-  
-      return (
-        <div id="gantt-settings">
-         <select name="select-level" id="select-level" value={this.state.level} onChange={this.changeLevel}>
-          <option value="year-month">Month / Day</option>
-          <option value="date-time">Day / Time</option>
-         </select>
-         
-         <fieldset id="select-from">
-          <legend>From</legend>
-          {fields1}
-         </fieldset>
-  
-         <fieldset id="select-to">
-          <legend>To</legend>
-          {fields2}
-         </fieldset>
-        </div>
-      );
+    
+        return (
+            <div id="gantt-settings">
+        
+            <fieldset id="select-from">
+            <legend>From</legend>
+            {fields1}
+            </fieldset>
+    
+            <fieldset id="select-to">
+            <legend>To</legend>
+            {fields2}
+            </fieldset>
+            </div>
+        );
     }
   
-    changeLevel = l => {
-      this.setState({level: l.target.value});
-      this.props.onLevelChanged(l.target.value);
-    }
-  
-    changeDateFrom = f => {
-  
-      let d = new Date(f.target.value);
-  
-      this.setState({dateFrom: d});
-  
-      this.props.onDateFromChanged(d);
-    }
-  
-    changeDateTo = t => {
-  
-      let d = new Date(t.target.value);
-  
-      this.setState({dateTo: d});
-  
-      this.props.onDateToChanged(d);
-    }
   
     changeYearFrom = y => {
   
       let v = parseInt(y.target.value);
+      let d = new Date(v, this.state.monthFrom, 1);
+
+      if(d <= this.state.dateTo){
   
-      this.setState({yearFrom: v});
-  
-      this.props.onDateFromChanged(
-        new Date(v, this.state.monthFrom, 1)
-      );
+        this.props.onDateFromChanged(d);
+        this.setState({yearFrom: v, dateFrom: d, valid: true});
+
+      }else{
+        this.setState({yearFrom: v, dateFrom: d, valid: false});
+      }
     }
   
     changeYearTo = y => {
   
       let v = parseInt(y.target.value);
-  
+      let d = new Date(v, this.state.monthTo, 1);
+
       this.setState({yearTo: v});
   
-      this.props.onDateToChanged(
-        new Date(v, this.state.monthTo, 1)
-      );
+      if(this.state.dateFrom <= d){
+
+        this.props.onDateToChanged(d);
+        this.setState({yearTo: v, dateTo: d, valid: true});
+
+      }else{
+
+        this.setState({yearTo: v, dateTo: d, valid: false});
+      }
     }
   
     changeMonthFrom = m => {
   
       let v = parseInt(m.target.value);
+      let d = new Date(this.state.yearFrom, v, 1);
   
-      this.setState({monthFrom: v});
-  
-      this.props.onDateFromChanged(
-        new Date(this.state.yearFrom, v, 1)
-      );
+      if(d <= this.state.dateTo){
+
+        this.props.onDateFromChanged(d);
+        this.setState({monthFrom: v, dateFrom : d, valid: true});
+
+      }else{
+        this.setState({monthFrom: v, dateFrom : d, valid: false});
+      }
     }
   
     changeMonthTo = m => {
   
       let v = parseInt(m.target.value);
+      let d = new Date(this.state.yearTo, v, 1);
   
-      this.setState({monthTo: v});
-  
-      this.props.onDateToChanged(
-        new Date(this.state.yearTo, v, 1)
-      );
+      if(this.state.dateFrom <= d){
+
+        this.props.onDateToChanged(d);
+        this.setState({monthTo: v, dateTo: d, valid: true});
+
+      }else{
+        this.setState({monthTo: v, dateTo: d, valid: false});
+      }
     }
 }  
 

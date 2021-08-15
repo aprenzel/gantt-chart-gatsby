@@ -10,6 +10,14 @@ fieldset{
   border:none;
 }
 
+.select_valid{
+  color: black;
+}
+
+.select_invalid{
+  color: red;
+}
+
 #gantt-container{
     display: grid;     
 }
