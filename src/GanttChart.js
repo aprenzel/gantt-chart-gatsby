@@ -238,7 +238,7 @@ class Chart extends React.Component {
   
           for(month; month <= last_month; month.setMonth(month.getMonth()+1)){
               
-            elements.push(<div key={"fr"+(i++)} className="gantt-row-period">{this.names[month.getMonth()] + " " + month.getFullYear()}</div>);
+            elements.push(<div key={"fr"+(i++)} className="gantt-row-period"><div className="period">{this.names[month.getMonth()] + " " + month.getFullYear()}</div></div>);
             
           }
 
@@ -265,7 +265,7 @@ class Chart extends React.Component {
 
             for(date; date <= l_om; date.setDate(date.getDate()+1)){
 
-                days.push(<div key={"sr"+(i++)} style={{borderTop: 'none'}} className="gantt-row-period">{date.getDate()}</div>);
+                days.push(<div key={"sr"+(i++)} style={{borderTop: 'none'}} className="gantt-row-period period">{date.getDate()}</div>);
             }
 
             elements.push(<div key={"sr"+(i++)} style={{border: 'none'}} className="gantt-row-period">{days}</div>);

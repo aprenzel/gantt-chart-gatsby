@@ -27,6 +27,7 @@ fieldset{
   color:rgba(0, 0, 0, 0.726);
   border:1px solid rgb(133, 129, 129);
   text-align: center;
+  padding: 15px;
 }
 
 .gantt-row-period{
@@ -37,11 +38,15 @@ fieldset{
   
   display:grid;
   grid-auto-flow: column;
-  grid-auto-columns: minmax(20px, 1fr);
+  grid-auto-columns: minmax(40px, 1fr);
+}
+
+.period{
+  padding: 10px 0 10px 0;
 }
 
 .gantt-row-item{
-    border: 1px dashed grey;
+    border: 1px solid rgb(214, 214, 214);
     padding: 10px 0 10px 0;
     position: relative;
     background-color:white;
@@ -49,12 +54,12 @@ fieldset{
 
 .job{
     position: absolute;
-    height:10px;
+    height:38px;
     top:5px;
     width: calc(2*100%);
     z-index: 100;
-    background-color:olive;
-    border-radius: 5px;
+    background-color:rgb(167, 171, 245);
+    border-radius: 0px;
     cursor: pointer;
 }
 
