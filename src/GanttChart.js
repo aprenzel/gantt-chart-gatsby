@@ -1,203 +1,17 @@
 import React from 'react';
 
 export class GanttChart extends React.Component {
-  
-    constructor(props) {
-  
-      super(props);
-     
-      this.state = {
-        jobs: props.jobs,
-        resources: props.resources,
-        dateFrom: new Date(2021,5,24),
-        dateTo: new Date(2021,7,31),
-        level: "year-month"
-      };
-    }
-  
-    render() {
-      return (
-        <div>
-              
-          <Settings dateFrom={this.state.dateFrom} dateTo={this.state.dateTo} level={this.state.level}
-            onDateFromChanged={(date) => {this.setState({dateFrom:date});}} 
-            onDateToChanged={(date) => {this.setState({dateTo:date});}}
-            onLevelChanged={(l) => {this.setState({level:l});}}/>
-          
-          <Chart jobs={this.state.jobs} resources={this.state.resources} dateFrom={this.state.dateFrom}
-            dateTo={this.state.dateTo} level={this.state.level}/>
-          
-        </div>
-      );
-    }
-}
-
-class Settings extends React.Component {
-
-    constructor(props) {
-  
-      super(props);
-  
-      this.state = {
-        dateFrom: props.dateFrom,
-        dateTo: props.dateTo,
-        level: props.level,
-        monthFrom: props.dateFrom.getMonth(),
-        monthTo: props.dateTo.getMonth(),
-        yearFrom: props.dateFrom.getFullYear(),
-        yearTo: props.dateTo.getFullYear(),
-        valid: true
-      };
-    }
-  
-    render() {
-  
-        let fields1;
-        let fields2;
-    
-        let years = [];
-
-        for(let i=2000; i<=2100; i++){
-            years.push(<option key={i} value={i}>{i}</option>);
-        }
-        
-        fields1 =  (
-        <div>
-            <select className={this.state.valid ? "select_valid" : "select_invalid"} value={this.state.yearFrom} id="from-select-year" name="from-select-year" onChange={this.changeYearFrom}>
-            {years}    
-            </select>
-
-            <select className={this.state.valid ? "select_valid" : "select_invalid"} value={this.state.monthFrom} id="from-select-month" name="from-select-month" onChange={this.changeMonthFrom}>
-            <option value="0">Jan</option>
-            <option value="1">Feb</option>
-            <option value="2">Mar</option>
-            <option value="3">Apr</option>
-            <option value="4">May</option>
-            <option value="5">Jun</option>
-            <option value="6">Jul</option>
-            <option value="7">Aug</option>
-            <option value="8">Sep</option>
-            <option value="9">Okt</option>
-            <option value="10">Nov</option>
-            <option value="11">Dec</option>   
-            </select>
-        </div> 
-        );
-
-        fields2 = (
-        <div>
-            <select className={this.state.valid ? "select_valid" : "select_invalid"} value={this.state.yearTo} id="to-select-year" name="to-select-year" onChange={this.changeYearTo}>
-            {years}    
-            </select>
-
-            <select className={this.state.valid ? "select_valid" : "select_invalid"} value={this.state.monthTo} id="to-select-month" name="to-select-month" onChange={this.changeMonthTo}>
-            <option value="0">Jan</option>
-            <option value="1">Feb</option>
-            <option value="2">Mar</option>
-            <option value="3">Apr</option>
-            <option value="4">May</option>
-            <option value="5">Jun</option>
-            <option value="6">Jul</option>
-            <option value="7">Aug</option>
-            <option value="8">Sep</option>
-            <option value="9">Okt</option>
-            <option value="10">Nov</option>
-            <option value="11">Dec</option>   
-            </select>
-        </div> 
-        );
-    
-        return (
-            <div id="gantt-settings">
-        
-            <fieldset id="select-from">
-            <legend>From</legend>
-            {fields1}
-            </fieldset>
-    
-            <fieldset id="select-to">
-            <legend>To</legend>
-            {fields2}
-            </fieldset>
-            </div>
-        );
-    }
-  
-  
-    changeYearFrom = y => {
-  
-      let v = parseInt(y.target.value);
-      let d = new Date(v, this.state.monthFrom, 1);
-
-      if(d <= this.state.dateTo){
-  
-        this.props.onDateFromChanged(d);
-        this.setState({yearFrom: v, dateFrom: d, valid: true});
-
-      }else{
-        this.setState({yearFrom: v, dateFrom: d, valid: false});
-      }
-    }
-  
-    changeYearTo = y => {
-  
-      let v = parseInt(y.target.value);
-      let d = new Date(v, this.state.monthTo, 1);
-
-      this.setState({yearTo: v});
-  
-      if(this.state.dateFrom <= d){
-
-        this.props.onDateToChanged(d);
-        this.setState({yearTo: v, dateTo: d, valid: true});
-
-      }else{
-
-        this.setState({yearTo: v, dateTo: d, valid: false});
-      }
-    }
-  
-    changeMonthFrom = m => {
-  
-      let v = parseInt(m.target.value);
-      let d = new Date(this.state.yearFrom, v, 1);
-  
-      if(d <= this.state.dateTo){
-
-        this.props.onDateFromChanged(d);
-        this.setState({monthFrom: v, dateFrom : d, valid: true});
-
-      }else{
-        this.setState({monthFrom: v, dateFrom : d, valid: false});
-      }
-    }
-  
-    changeMonthTo = m => {
-  
-      let v = parseInt(m.target.value);
-      let d = new Date(this.state.yearTo, v, 1);
-  
-      if(this.state.dateFrom <= d){
-
-        this.props.onDateToChanged(d);
-        this.setState({monthTo: v, dateTo: d, valid: true});
-
-      }else{
-        this.setState({monthTo: v, dateTo: d, valid: false});
-      }
-    }
-}  
-
-class Chart extends React.Component {
 
     constructor(props) {
 
-        super(props);      
+        super(props);       
 
         this.state = {
 
             jobs: props.jobs,
-            resources: props.resources
+            resources: props.resources,
+            dateFrom: new Date(2021,5,1),
+            dateTo: new Date(2021,5,30),
         };
     }
       
@@ -205,15 +19,13 @@ class Chart extends React.Component {
     
     render(){
         
-        var first_month = new Date(this.props.dateFrom.getFullYear(), this.props.dateFrom.getMonth(), 1);
-        var last_month = new Date(this.props.dateTo.getFullYear(), this.props.dateTo.getMonth(), 1);
-    
-        var n_months = this.monthDiff(first_month, last_month)+1;
-        let grid_style = `100px repeat(${n_months},1fr)`;
+        var month = new Date(this.state.dateFrom.getFullYear(), this.state.dateFrom.getMonth(), 1);
+       
+        let grid_style = `100px 1fr`;
 
-        let firstRow = this.initFirstRow(first_month, last_month);
-        let secondRow = this.initSecondRow(first_month, last_month);
-        let ganttRows = this.initGanttRows(first_month, last_month);
+        let firstRow = this.initFirstRow(month);
+        let secondRow = this.initSecondRow(month);
+        let ganttRows = this.initGanttRows(month);
 
         return (
         
@@ -228,109 +40,72 @@ class Chart extends React.Component {
      }
 
 
-     initFirstRow = function(first_month, last_month){
+     initFirstRow = function(month){
       
           let elements = []; let i = 0;
 
           elements.push(<div key={"fr"+(i++)} className="gantt-row-resource"></div>);
          
-          var month = new Date(first_month);
-  
-          for(month; month <= last_month; month.setMonth(month.getMonth()+1)){
-              
-            elements.push(<div key={"fr"+(i++)} className="gantt-row-period"><div className="period">{this.names[month.getMonth()] + " " + month.getFullYear()}</div></div>);
+          elements.push(<div key={"fr"+(i++)} className="gantt-row-period"><div className="period">{this.names[month.getMonth()] + " " + month.getFullYear()}</div></div>);
             
-          }
-
           return elements;
     }
 
 
-    initSecondRow = function(first_month, last_month){
+    initSecondRow = function(month){
 
         let elements = []; let i=0;
 
         elements.push(<div key={"sr"+(i++)} style={{borderTop : 'none'}} className="gantt-row-resource"></div>);
 
-        var month = new Date(first_month);
-  
-        for(month; month <= last_month; month.setMonth(month.getMonth()+1)){
+        let days = [];
 
-            let days = [];
+        var f_om = new Date(month);
+        var l_om = new Date(month.getFullYear(), month.getMonth()+1, 0);
+      
+        var date = new Date(f_om);
 
-            var f_om = new Date(month);
-            var l_om = new Date(month.getFullYear(), month.getMonth()+1, 0);
-          
-            var date = new Date(f_om);
+        for(date; date <= l_om; date.setDate(date.getDate()+1)){
 
-            for(date; date <= l_om; date.setDate(date.getDate()+1)){
-
-                days.push(<div key={"sr"+(i++)} style={{borderTop: 'none'}} className="gantt-row-period period">{date.getDate()}</div>);
-            }
-
-            elements.push(<div key={"sr"+(i++)} style={{border: 'none'}} className="gantt-row-period">{days}</div>);
-
+            days.push(<div key={"sr"+(i++)} style={{borderTop: 'none'}} className="gantt-row-period period">{date.getDate()}</div>);
         }
+
+        elements.push(<div key={"sr"+(i++)} style={{border: 'none'}} className="gantt-row-period">{days}</div>);
 
         return elements;
 
     }
 
-    initGanttRows(first_month, last_month){
+    initGanttRows(month){
 
         let elements = []; let i=0;
 
         this.state.resources.forEach(resource => {
 
             elements.push(<div key={"gr"+(i++)} style={{borderTop : 'none'}} className="gantt-row-resource">{resource.name}</div>);
-
-            var month = new Date(first_month);
     
-            for(month; month <= last_month; month.setMonth(month.getMonth()+1)){
+            let cells = [];
 
-                let cells = [];
+            var f_om = new Date(month);
+            var l_om = new Date(month.getFullYear(), month.getMonth()+1, 0);
+        
+            var date = new Date(f_om);
 
-                var f_om = new Date(month);
-                var l_om = new Date(month.getFullYear(), month.getMonth()+1, 0);
-            
-                var date = new Date(f_om);
+            for(date; date <= l_om; date.setDate(date.getDate()+1)){
 
-                for(date; date <= l_om; date.setDate(date.getDate()+1)){
+                let cell_jobs = this.state.jobs.filter((job) => job.resource == resource.id && job.start.getTime() == date.getTime());
 
-                    let cell_jobs = this.state.jobs.filter((job) => job.resource == resource.id && job.start.getTime() == date.getTime());
-
-                    cells.push(<ChartCell key={"gr"+(i++)} resource={resource} date={new Date(date)} jobs={cell_jobs} updateJob={this.updateJob}/>);
-                }
-
-                elements.push(<div key={"gr"+(i++)} style={{border: 'none'}} className="gantt-row-period">{cells}</div>);
-
+                cells.push(<ChartCell key={"gr"+(i++)} resource={resource} date={new Date(date)} jobs={cell_jobs} updateJob={this.updateJob}/>);
             }
+
+            elements.push(<div key={"gr"+(i++)} style={{border: 'none'}} className="gantt-row-period">{cells}</div>);
+
         });
 
         return elements;
 
     }
 
-
-    updateJob = (id, newResource, newDate) => {
-
-        let new_jobs = this.state.jobs.slice();
-
-        let job = new_jobs.find(j => j.id == id );
-
-        job.resource = newResource;
-       
-        let d = this.dayDiff(job.start, job.end); 
-        let end = new Date(newDate);
-        end.setDate(newDate.getDate()+d);
-
-        job.start = newDate;
-        job.end = end;
-
-        this.setState({jobs : new_jobs});
-    };
-
-       
     formatDate = function(d){
 
         return d.getFullYear()+"-"+this.zeroPad(d.getMonth()+1)+"-"+this.zeroPad(d.getDate());
@@ -376,22 +151,10 @@ class ChartCell extends React.Component {
 
       let jobElements = this.props.jobs.map((job) => this.getJobElement(job));
 
-      let dragOver = (ev) => {ev.preventDefault()};
-
-      let drop = (ev) => {
-
-        ev.preventDefault(); 
-
-        let data = ev.dataTransfer.getData("job");  
-
-        this.props.updateJob(data, this.props.resource.id, this.props.date)
-
-      };
-
       return (
         <div 
             style={{borderTop: 'none', borderRight: 'none', backgroundColor: (this.props.date.getDay()==0 || this.props.date.getDay()==6) ? "whitesmoke" : "white" }} 
-            className="gantt-row-item" onDragOver={dragOver} onDrop={drop}>
+            className="gantt-row-item">
             {jobElements}
         </div>
       );
@@ -406,14 +169,11 @@ class ChartCell extends React.Component {
                 className="job" 
                 id={job.id} 
                 key={job.id}
-                draggable="true"
-                onDragStart={this.dragStart}>
+        >
 
         </div>
         );
     }
-
-    dragStart = (ev) => { ev.dataTransfer.setData("job", ev.target.id);}
 
     dayDiff(d1, d2){
     
