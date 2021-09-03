@@ -11,7 +11,6 @@ export class GanttChart extends React.Component {
         resources: props.resources,
         dateFrom: new Date(2021,5,24),
         dateTo: new Date(2021,7,31),
-        level: "year-month"
       };
     }
   
@@ -19,13 +18,13 @@ export class GanttChart extends React.Component {
       return (
         <div>
               
-          <Settings dateFrom={this.state.dateFrom} dateTo={this.state.dateTo} level={this.state.level}
+          <Settings dateFrom={this.state.dateFrom} dateTo={this.state.dateTo}
             onDateFromChanged={(date) => {this.setState({dateFrom:date});}} 
             onDateToChanged={(date) => {this.setState({dateTo:date});}}
-            onLevelChanged={(l) => {this.setState({level:l});}}/>
+          />
           
           <Chart jobs={this.state.jobs} resources={this.state.resources} dateFrom={this.state.dateFrom}
-            dateTo={this.state.dateTo} level={this.state.level}/>
+            dateTo={this.state.dateTo}/>
           
         </div>
       );
@@ -41,7 +40,6 @@ class Settings extends React.Component {
       this.state = {
         dateFrom: props.dateFrom,
         dateTo: props.dateTo,
-        level: props.level,
         monthFrom: props.dateFrom.getMonth(),
         monthTo: props.dateTo.getMonth(),
         yearFrom: props.dateFrom.getFullYear(),
