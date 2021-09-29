@@ -1,5 +1,9 @@
 import React from 'react';
 
+/*extended version of the chart, features:
+ *select starting month and end month
+ *drag and drop jobs
+*/
 export class GanttChart extends React.Component {
   
     constructor(props) {
@@ -7,8 +11,6 @@ export class GanttChart extends React.Component {
       super(props);
      
       this.state = {
-        jobs: props.jobs,
-        resources: props.resources,
         dateFrom: new Date(2021,5,24),
         dateTo: new Date(2021,7,31),
       };
@@ -23,7 +25,7 @@ export class GanttChart extends React.Component {
             onDateToChanged={(date) => {this.setState({dateTo:date});}}
           />
           
-          <Chart jobs={this.state.jobs} resources={this.state.resources} dateFrom={this.state.dateFrom}
+          <Chart jobs={this.props.jobs} resources={this.props.resources} dateFrom={this.state.dateFrom}
             dateTo={this.state.dateTo}/>
           
         </div>
@@ -278,7 +280,7 @@ class Chart extends React.Component {
 
         let elements = []; let i=0;
 
-        this.state.resources.forEach(resource => {
+        this.props.resources.forEach(resource => {
 
             elements.push(<div key={"gr"+(i++)} style={{borderTop : 'none'}} className="gantt-row-resource">{resource.name}</div>);
 
@@ -295,7 +297,7 @@ class Chart extends React.Component {
 
                 for(date; date <= l_om; date.setDate(date.getDate()+1)){
 
-                    let cell_jobs = this.state.jobs.filter((job) => job.resource == resource.id && job.start.getTime() == date.getTime());
+                    let cell_jobs = this.props.jobs.filter((job) => job.resource == resource.id && job.start.getTime() == date.getTime());
 
                     cells.push(<ChartCell key={"gr"+(i++)} resource={resource} date={new Date(date)} jobs={cell_jobs} updateJob={this.updateJob}/>);
                 }
@@ -312,7 +314,7 @@ class Chart extends React.Component {
 
     updateJob = (id, newResource, newDate) => {
 
-        let new_jobs = this.state.jobs.slice();
+        let new_jobs = this.props.jobs.slice();
 
         let job = new_jobs.find(j => j.id == id );
 

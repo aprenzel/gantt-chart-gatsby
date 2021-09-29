@@ -2,21 +2,18 @@ import React from 'react';
 
 export class GanttChart extends React.Component {
 
+    names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  
     constructor(props) {
 
         super(props);       
 
         this.state = {
-
-            jobs: props.jobs,
-            resources: props.resources,
             dateFrom: new Date(2021,5,1),
             dateTo: new Date(2021,5,30),
         };
     }
       
-    names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    
     render(){
         
         var month = new Date(this.state.dateFrom.getFullYear(), this.state.dateFrom.getMonth(), 1);
@@ -80,7 +77,7 @@ export class GanttChart extends React.Component {
 
         let elements = []; let i=0;
 
-        this.state.resources.forEach(resource => {
+        this.props.resources.forEach(resource => {
 
             elements.push(<div key={"gr"+(i++)} style={{borderTop : 'none'}} className="gantt-row-resource">{resource.name}</div>);
     
@@ -93,9 +90,9 @@ export class GanttChart extends React.Component {
 
             for(date; date <= l_om; date.setDate(date.getDate()+1)){
 
-                let cell_jobs = this.state.jobs.filter((job) => job.resource == resource.id && job.start.getTime() == date.getTime());
+                let cell_jobs = this.props.jobs.filter((job) => job.resource == resource.id && job.start.getTime() == date.getTime());
 
-                cells.push(<ChartCell key={"gr"+(i++)} resource={resource} date={new Date(date)} jobs={cell_jobs} updateJob={this.updateJob}/>);
+                cells.push(<ChartCell key={"gr"+(i++)} resource={resource} date={new Date(date)} jobs={cell_jobs}/>);
             }
 
             elements.push(<div key={"gr"+(i++)} style={{border: 'none'}} className="gantt-row-period">{cells}</div>);
