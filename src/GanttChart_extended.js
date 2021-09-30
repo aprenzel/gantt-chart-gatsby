@@ -314,20 +314,19 @@ class Chart extends React.Component {
 
     updateJob = (id, newResource, newDate) => {
 
-        let new_jobs = this.props.jobs.slice();
+        let job = this.props.jobs.find(j => j.id == id );
 
-        let job = new_jobs.find(j => j.id == id );
-
-        job.resource = newResource;
+        let newJob = {};
+        newJob.resource = newResource;
        
         let d = this.dayDiff(job.start, job.end); 
         let end = new Date(newDate);
         end.setDate(newDate.getDate()+d);
 
-        job.start = newDate;
-        job.end = end;
+        newJob.start = newDate;
+        newJob.end = end;
 
-        this.setState({jobs : new_jobs});
+        this.props.onJobUpdated(id, newJob);
     };
 
        
@@ -365,11 +364,6 @@ class ChartCell extends React.Component {
     constructor(props) {
 
       super(props);
-      
-      this.state = {
-
-        jobs: props.jobs
-      }
     }
  
     render(){

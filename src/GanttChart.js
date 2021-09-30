@@ -92,7 +92,7 @@ export class GanttChart extends React.Component {
 
                 let cell_jobs = this.props.jobs.filter((job) => job.resource == resource.id && job.start.getTime() == date.getTime());
 
-                cells.push(<ChartCell key={"gr"+(i++)} resource={resource} date={new Date(date)} jobs={cell_jobs}/>);
+                cells.push(<ChartCell key={"gr"+(i++)} resource={resource} date={new Date(date)} jobs={cell_jobs} updateJob={this.updateJob}/>);
             }
 
             elements.push(<div key={"gr"+(i++)} style={{border: 'none'}} className="gantt-row-period">{cells}</div>);
@@ -130,6 +130,23 @@ export class GanttChart extends React.Component {
         return diffDays;
     }
 
+    updateJob = (id, newResource, newDate) => {
+
+        let job = this.props.jobs.find(j => j.id == id );
+
+        let newJob = {};
+        newJob.resource = newResource;
+       
+        let d = this.dayDiff(job.start, job.end); 
+        let end = new Date(newDate);
+        end.setDate(newDate.getDate()+d);
+
+        newJob.start = newDate;
+        newJob.end = end;
+
+        this.props.onJobUpdated(id, newJob);
+    };
+
 }
 
 class ChartCell extends React.Component {
@@ -137,21 +154,27 @@ class ChartCell extends React.Component {
     constructor(props) {
 
       super(props);
-      
-      this.state = {
-
-        jobs: props.jobs
-      }
     }
  
     render(){
 
       let jobElements = this.props.jobs.map((job) => this.getJobElement(job));
 
+      let dragOver = (ev) => {ev.preventDefault()};
+
+      let drop = (ev) => {
+
+        ev.preventDefault(); 
+
+        let data = ev.dataTransfer.getData("job");  
+
+        this.props.updateJob(data, this.props.resource.id, this.props.date)
+      };
+
       return (
         <div 
             style={{borderTop: 'none', borderRight: 'none', backgroundColor: (this.props.date.getDay()==0 || this.props.date.getDay()==6) ? "whitesmoke" : "white" }} 
-            className="gantt-row-item">
+            className="gantt-row-item" onDragOver={dragOver} onDrop={drop}>
             {jobElements}
         </div>
       );
@@ -166,11 +189,14 @@ class ChartCell extends React.Component {
                 className="job" 
                 id={job.id} 
                 key={job.id}
-        >
+                draggable="true"
+                onDragStart={this.dragStart}>
 
         </div>
         );
     }
+
+    dragStart = (ev) => { ev.dataTransfer.setData("job", ev.target.id);}
 
     dayDiff(d1, d2){
     
