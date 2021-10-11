@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useStaticQuery, graphql } from "gatsby"
-import {GanttChart} from "../GanttChart"
+import {GanttChart} from "../GanttChart_extended"
 import { useState, useEffect } from 'react';
 import '../styles/index.css';
 
@@ -69,7 +69,7 @@ const IndexPage = (data) => {
       <main>
         <title>Gantt Chart</title>
         <h1>Welcome to my Gatsby Gantt Chart</h1> 
-        <GanttChart jobs={jobs} resources={resources} onJobUpdated={updateJob}/> 
+        <GanttChart jobs={jobs} resources={resources} onUpdateJob={updateJob}/> 
       </main>
     )
   }else{
