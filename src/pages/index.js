@@ -1,23 +1,22 @@
-import * as React from "react"
-import { useStaticQuery, graphql } from "gatsby"
-import {GanttChart} from "../GanttChart"
-import { useState, useEffect } from 'react';
-import '../styles/index.css';
+import * as React from 'react'
+import { useStaticQuery, graphql } from 'gatsby'
+import { GanttChart } from '../GanttChart'
+import { useState, useEffect } from 'react'
+import '../styles/index.css'
 
 // markup
 const IndexPage = (data) => {
+  const j = data.data.jobs.edges.map(edge => {
+    const s = new Date(edge.node.data.start);
 
-  let j = data.data.jobs.edges.map(edge => {
-    
-    let s = new Date(edge.node.data.start);
     s.setHours(0);
 
-    let e = new Date(edge.node.data.end);
+    const e = new Date(edge.node.data.end);
     e.setHours(0);
 
     return {
       airtable_id: edge.node.recordId,
-      id:edge.node.data.id,
+      id: edge.node.data.id,
       start: s,
       end: e,
       resource: edge.node.data.id__from_resource_[0],
@@ -25,69 +24,61 @@ const IndexPage = (data) => {
     };
   });
 
-  let r = data.data.resources.edges.map(edge => {
-
-    return{
-      id: edge.node.data.id,
-      name: edge.node.data.name
-    }
-  });
+  const r = data.data.resources.edges.map(edge => ({
+    id: edge.node.data.id,
+    name: edge.node.data.name
+  }));
 
   const [resources, setResources] = useState(r);
   const [jobs, setJobs] = useState(j);
 
   useEffect(() => {
-    const interval = setInterval(() => { 
-      
-      let jobsLoaded = (j) => { setJobs(j) };
-      let resourcesLoaded = (r) => { setResources(r) };
+    const interval = setInterval(() => {
+      const jobsLoaded = (j) => { setJobs(j) };
+      const resourcesLoaded = (r) => { setResources(r) };
 
       loadDataFromAirtable(jobsLoaded, resourcesLoaded);
-    
-    }, 60000);  
+    }, 60000);
 
     return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
   }, []);
 
-  let updateJob = (id, newJob) => {
+  const updateJob = (id, newJob) => {
+    const newJobs = jobs.slice();
 
-    let new_jobs = jobs.slice();
-
-    let job = new_jobs.find(j => j.id == id );
+    const job = newJobs.find(j => j.id === id);
 
     job.resource = newJob.resource;
     job.start = newJob.start;
     job.end = newJob.end;
-  
-    setJobs(new_jobs);
+
+    setJobs(newJobs);
 
     updateJobToAirtable(job);
   }
 
-  if(resources && jobs){
+  if (resources && jobs) {
     return (
       <main>
         <title>Gantt Chart</title>
-        <h1>Welcome to my Gatsby Gantt Chart</h1> 
-        <GanttChart jobs={jobs} resources={resources} onUpdateJob={updateJob}/> 
+        <h1>Welcome to my Gatsby Gantt Chart</h1>
+        <GanttChart jobs={jobs} resources={resources} onUpdateJob={updateJob}/>
       </main>
     )
-  }else{
+  } else {
     return (
       <main>
         <title>Gantt Chart</title>
-        <h1>Welcome to my Gatsby Gantt Chart</h1> 
-        <p>Missing data...</p> 
+        <h1>Welcome to my Gatsby Gantt Chart</h1>
+        <p>Missing data...</p>
       </main>
     )
   }
 }
 
-
-function updateJobToAirtable(job){
-
-    let data = {
-      records: [
+function updateJobToAirtable (job) {
+  const data = {
+    records: [
       {
         id: job.airtable_id,
         fields: {
@@ -99,72 +90,63 @@ function updateJobToAirtable(job){
           ]
         }
       }
-    ]};
+    ]
+  };
 
-  fetch("https://api.airtable.com/v0/apprFBK5EHobJNylY/Jobs", {
-    method: "PATCH", 
-    headers: {"Authorization": "Bearer keyofGe507yAlwZXv", "Content-Type": "application/json"},
+  fetch('https://api.airtable.com/v0/apprFBK5EHobJNylY/Jobs', {
+    method: 'PATCH',
+    headers: { Authorization: 'Bearer keyofGe507yAlwZXv', 'Content-Type': 'application/json' },
     body: JSON.stringify(data)
   });
 }
 
-function loadDataFromAirtable(onJobsLoaded, onResourcesLoaded){
-
-  let j,r;
+function loadDataFromAirtable (onJobsLoaded, onResourcesLoaded) {
+  let j, r;
 
   fetch('https://api.airtable.com/v0/apprFBK5EHobJNylY/Jobs?maxRecords=3&view=Grid%20view',
-        {headers: {"Authorization": "Bearer keyofGe507yAlwZXv"}})
-  .then(response => response.json())
-  .then(data => {
+    { headers: { Authorization: 'Bearer keyofGe507yAlwZXv' } })
+    .then(response => response.json())
+    .then(data => {
+      j = data.records.map(record => {
+        const s = new Date(record.fields.start);
+        s.setHours(0);
 
-    j = data.records.map(record => {
+        const e = new Date(record.fields.end);
+        e.setHours(0);
 
-      let s = new Date(record.fields.start);
-      s.setHours(0);
-  
-      let e = new Date(record.fields.end);
-      e.setHours(0);
+        return {
+          airtable_id: record.id,
+          id: record.fields.id,
+          start: s,
+          end: e,
+          resource: record.fields['id (from resource)'][0],
+          resource_airtable_id: record.fields.resource[0]
+        };
+      });
 
-       return {
-        airtable_id: record.id,
-        id: record.fields.id,
-        start: s,
-        end: e,
-        resource: record.fields['id (from resource)'][0],
-        resource_airtable_id: record.fields.resource[0]
-       };
+      onJobsLoaded(j);
     });
 
-    onJobsLoaded(j);
-  });
+  fetch('https://api.airtable.com/v0/apprFBK5EHobJNylY/Resources?maxRecords=3&view=Grid%20view', { headers: { Authorization: 'Bearer keyofGe507yAlwZXv' } })
+    .then(response => response.json())
+    .then(data => {
+      r = data.records.map(record => {
+        return {
+          id: record.fields.id,
+          name: record.fields.name
+        };
+      });
 
-
-  fetch('https://api.airtable.com/v0/apprFBK5EHobJNylY/Resources?maxRecords=3&view=Grid%20view',{headers: {"Authorization": "Bearer keyofGe507yAlwZXv"}})
-  .then(response => response.json())
-  .then(data => {
-
-    r = data.records.map(record => {
-
-       return {
-        id: record.fields.id,
-        name: record.fields.name
-       };
+      onResourcesLoaded(r);
     });
-
-    onResourcesLoaded(r);
-  });
 }
 
-function formatDate(d){
-
-  return d.getFullYear()+"-"+zeroPad(d.getMonth()+1)+"-"+zeroPad(d.getDate());
-
+function formatDate (d) {
+  return d.getFullYear() + '-' + zeroPad(d.getMonth() + 1) + '-' + zeroPad(d.getDate());
 }
 
-function zeroPad(n){
-
-  return n<10 ? "0"+n : n;
-
+function zeroPad (n) {
+  return n < 10 ? '0' + n : n;
 }
 
 export const query = graphql`
@@ -199,4 +181,3 @@ export const query = graphql`
       }
   `
 export default IndexPage
-

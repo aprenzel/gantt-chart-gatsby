@@ -18,7 +18,7 @@ export class GanttChart extends React.Component {
   
     render() {
       return (
-        <div>
+       <div>
               
           <Settings dateFrom={this.state.dateFrom} dateTo={this.state.dateTo}
             onDateFromChanged={(date) => {this.setState({dateFrom:date});}} 

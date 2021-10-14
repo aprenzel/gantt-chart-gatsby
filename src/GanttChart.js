@@ -2,8 +2,6 @@ import React from 'react';
 
 export class GanttChart extends React.Component {
 
-    names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  
     constructor(props) {
 
         super(props);       
@@ -12,6 +10,9 @@ export class GanttChart extends React.Component {
             dateFrom: new Date(2021,5,1),
             dateTo: new Date(2021,5,30),
         };
+
+        this.names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      
     }
       
     render(){
