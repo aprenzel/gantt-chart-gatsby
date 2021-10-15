@@ -1,15 +1,15 @@
-import * as React from 'react'
-import { useStaticQuery, graphql } from 'gatsby'
-import { GanttChart } from '../GanttChart'
-import { useState, useEffect } from 'react'
-import '../styles/index.css'
+import * as React from 'react';
+import { graphql } from 'gatsby';
+import { GanttChart } from '../GanttChart';
+import { useState, useEffect } from 'react';
+import '../styles/index.css';
 
 // markup
 const IndexPage = (data) => {
-  const j = data.data.jobs.edges.map(edge => {
+  const j = data.data.jobs.edges.map(edge => { 
     const s = new Date(edge.node.data.start);
 
-    s.setHours(0);
+    s.setHours(0); 
 
     const e = new Date(edge.node.data.end);
     e.setHours(0);
@@ -34,8 +34,8 @@ const IndexPage = (data) => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const jobsLoaded = (j) => { setJobs(j) };
-      const resourcesLoaded = (r) => { setResources(r) };
+      const jobsLoaded = (j) => { setJobs(j); };
+      const resourcesLoaded = (r) => { setResources(r); };
 
       loadDataFromAirtable(jobsLoaded, resourcesLoaded);
     }, 60000);
@@ -55,16 +55,16 @@ const IndexPage = (data) => {
     setJobs(newJobs);
 
     updateJobToAirtable(job);
-  }
+  };
 
-  if (resources && jobs) {
+  if(resources && jobs) {
     return (
       <main>
         <title>Gantt Chart</title>
         <h1>Welcome to my Gatsby Gantt Chart</h1>
         <GanttChart jobs={jobs} resources={resources} onUpdateJob={updateJob}/>
       </main>
-    )
+    );
   } else {
     return (
       <main>
@@ -72,9 +72,9 @@ const IndexPage = (data) => {
         <h1>Welcome to my Gatsby Gantt Chart</h1>
         <p>Missing data...</p>
       </main>
-    )
+    );
   }
-}
+};
 
 function updateJobToAirtable (job) {
   const data = {
@@ -179,5 +179,5 @@ export const query = graphql`
           }
         }
       }
-  `
-export default IndexPage
+  `;
+export default IndexPage;

@@ -158,7 +158,7 @@ class Settings extends React.Component {
     }
   
     changeMonthFrom = m => {
-  
+
       let v = parseInt(m.target.value);
       let d = new Date(this.state.yearFrom, v, 1);
   
